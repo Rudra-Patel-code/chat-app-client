@@ -50,6 +50,9 @@ const GroupDetailsModal = ({ isOpen, onClose, chatId, onGroupDelete }) => {
 
   const [users, setUsers] = useState([]);
 
+  const disableButton =
+    isAddingParticipantLoading || removingLoading || deleteGroupLoading;
+
   const handleNameChange = async () => {
     if (!newGroupName) return alert("Group name is required");
 
@@ -83,7 +86,8 @@ const GroupDetailsModal = ({ isOpen, onClose, chatId, onGroupDelete }) => {
       setDeleteGroupLoading,
       (res) => {
         toast.success(res.message);
-        onGroupDelete();
+        onGroupDelete(chatId);
+        onClose();
       },
       (errorMessage) => {
         toast.error(errorMessage);
@@ -213,8 +217,6 @@ const GroupDetailsModal = ({ isOpen, onClose, chatId, onGroupDelete }) => {
           } transform sm:w-3/4 sm:max-w-[1000px] w-full bg-[#161616] overflow-y-auto transition-all  duration-1000 ease-in-out`}
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Close button */}
-
           <div className="relative">
             <p className="absolute top-4 left-4">About Group</p>
 
@@ -226,197 +228,236 @@ const GroupDetailsModal = ({ isOpen, onClose, chatId, onGroupDelete }) => {
             </button>
           </div>
 
-          <div className="mt-5 p-4">
-            <div className="flex justify-center items-center ml-10">
-              {groupDetails?.participants.slice(0, 3).map((participant) => (
-                <div key={participant._id} className="w-20 -ml-10 ">
-                  <img
-                    className="rounded-full"
-                    src={participant.avatar.url}
-                    alt="avatar"
-                  />
-                </div>
-              ))}
+          {isfetchingDetails ? (
+            <div className="w-full h-[100%] flex flex-col gap-1 items-center justify-center">
+              <FaSpinner className="text-4xl animate-spin" />
+              Fetching Details...
             </div>
-
-            <div className=" w-full flex flex-col justify-center items-center text-center">
-              {isRenamingGroup ? (
-                <div className="w-full flex-wrap flex justify-center items-center mt-5 gap-2">
-                  <input
-                    type="text"
-                    placeholder="Enter New Group Name ..."
-                    className="w-full rounded-lg outline-none  border-0 py-3 px-5 bg-zinc-800 text-white font-light placeholder:text-white/70"
-                    value={newGroupName}
-                    onChange={(e) => setNewGroupName(e.target.value)}
-                  />
-                  <div className="flex justify-center gap-5 my-4">
-                    <button
-                      onClick={handleNameChange}
-                      className="w-full text-sm rounded-md bg-purple-600 p-3 text-center font-bold text-zinc-100 shadow-[5px_5px_0px_0px_#4f4e4e] transition-all duration-150 ease-in-out active:translate-x-[5px] active:translate-y-[5px] active:shadow-[0px_0px_0px_0px_#4f4e4e]"
-                      disabled={changingNameLoading}
-                    >
-                      {changingNameLoading ? (
-                        <FaSpinner className="animate-spin  " />
-                      ) : (
-                        "Save"
-                      )}
-                    </button>
-
-                    <button
-                      onClick={() => setIsRemainingGroup(false)}
-                      className="w-full rounded-md relative text-sm bg-red-700 p-3 text-center font-bold text-zinc-100 shadow-[5px_5px_0px_0px_#4f4e4e] transition-all duration-150 ease-in-out active:translate-x-[5px] active:translate-y-[5px] active:shadow-[0px_0px_0px_0px_#4f4e4e]"
-                      disabled={changingNameLoading}
-                    >
-                      cancel
-                    </button>
+          ) : (
+            <div className="mt-5 p-4">
+              <div className="flex justify-center items-center ml-10">
+                {groupDetails?.participants.slice(0, 3).map((participant) => (
+                  <div key={participant._id} className="w-20 -ml-10 ">
+                    <img
+                      className="rounded-full"
+                      src={participant.avatar.url}
+                      alt="avatar"
+                    />
                   </div>
-                </div>
-              ) : (
-                <div className="w-full inline-flex justify-center items-center text-center mt-5">
-                  <h1 className=" text-xl sm:text-3xl line-clamp-1">
-                    {groupDetails?.name}
-                  </h1>
-                  {groupDetails?.admin === user?._id ? (
-                    <button
-                      onClick={() => setIsRemainingGroup(true)}
-                      className="p-3 text-lg text-purple-600"
-                    >
-                      <HiOutlinePencilAlt />
-                    </button>
-                  ) : null}
-                </div>
-              )}
+                ))}
+              </div>
 
-              <div className="w-full flex flex-col justify-center items-center my-4">
-                <div className="w-full flex justify-center items-center border-b-2 py-3 border-dashed border-slate-400 ">
-                  <p className="text-sm text-slate-500">
-                    {groupDetails?.participants?.length} participants
-                  </p>
-                </div>
-                <div className="flex gap-3 items-center justify-center w-full my-3 textsla text-sm">
-                  <MdOutlineGroups className="text-xl" /> Group Participants
+              <div className=" w-full flex flex-col justify-center items-center text-center">
+                {isRenamingGroup ? (
+                  <div className="w-full flex-wrap flex justify-center items-center mt-5 gap-2">
+                    <input
+                      type="text"
+                      placeholder="Enter New Group Name ..."
+                      className="w-full rounded-lg outline-none  border-0 py-3 px-5 bg-zinc-800 text-white font-light placeholder:text-white/70"
+                      value={newGroupName}
+                      onChange={(e) => setNewGroupName(e.target.value)}
+                    />
+                    <div className="flex justify-center gap-5 my-4">
+                      <button
+                        onClick={handleNameChange}
+                        className="w-full text-sm rounded-md bg-purple-600 p-3 text-center font-bold text-zinc-100 shadow-[5px_5px_0px_0px_#4f4e4e] transition-all duration-150 ease-in-out active:translate-x-[5px] active:translate-y-[5px] active:shadow-[0px_0px_0px_0px_#4f4e4e]"
+                        disabled={changingNameLoading}
+                      >
+                        {changingNameLoading ? (
+                          <FaSpinner className="animate-spin  " />
+                        ) : (
+                          "Save"
+                        )}
+                      </button>
+
+                      <button
+                        onClick={() => setIsRemainingGroup(false)}
+                        className="w-full rounded-md relative text-sm bg-red-700 p-3 text-center font-bold text-zinc-100 shadow-[5px_5px_0px_0px_#4f4e4e] transition-all duration-150 ease-in-out active:translate-x-[5px] active:translate-y-[5px] active:shadow-[0px_0px_0px_0px_#4f4e4e]"
+                        disabled={changingNameLoading}
+                      >
+                        cancel
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="w-full inline-flex justify-center items-center text-center mt-5">
+                    <h1 className=" text-xl sm:text-3xl line-clamp-1">
+                      {groupDetails?.name}
+                    </h1>
+                    {groupDetails?.admin === user?._id ? (
+                      <button
+                        onClick={() => setIsRemainingGroup(true)}
+                        className="p-3 text-lg text-purple-600"
+                      >
+                        <HiOutlinePencilAlt />
+                      </button>
+                    ) : null}
+                  </div>
+                )}
+
+                <div className="w-full flex flex-col justify-center items-center my-4">
+                  <div className="w-full flex justify-center items-center border-b-2 py-3 border-dashed border-slate-400 ">
+                    <p className="text-sm text-slate-500">
+                      {groupDetails?.participants?.length} participants
+                    </p>
+                  </div>
+                  <div className="flex gap-3 items-center justify-center w-full my-3 textsla text-sm">
+                    <MdOutlineGroups className="text-xl" /> Group Participants
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <ul className="max-h-[100vh]  flex flex-col w-full mb-4 overflow-y-auto">
-              {groupDetails?.participants?.map((participant) => (
-                <li
-                  key={participant._id}
-                  className="flex w-full mx-auto max-w-xl items-center justify-start gap-2 py-4 pr-4 border-b-2
+              <ul className="max-h-[100vh]  flex flex-col w-full mb-4 overflow-y-auto">
+                {groupDetails?.participants?.map((participant) => (
+                  <li
+                    key={participant._id}
+                    className="flex w-full mx-auto max-w-xl items-center justify-start gap-2 py-4 pr-4 border-b-2
                 "
-                >
-                  <img
-                    className="flex h-10 w-10 flex-shrink-0 rounded-full object-cover md:h-14 md:w-14"
-                    src={participant.avatar.url}
-                    alt="avatar"
-                  />
-                  <div className="flex flex-col items-start justify-start text-left text-white">
-                    <p className="inline-flex items-center text-sm font-semibold md:text-base">
-                      {participant.username}
-                      <span className="mx-2 text-xs text-purple-600 ">
-                        {participant._id === groupDetails.admin && "admin"}
+                  >
+                    <img
+                      className="flex h-10 w-10 flex-shrink-0 rounded-full object-cover md:h-14 md:w-14"
+                      src={participant.avatar.url}
+                      alt="avatar"
+                    />
+                    <div className="flex flex-col items-start justify-start text-left text-white">
+                      <p className="inline-flex items-center text-sm font-semibold md:text-base">
+                        {participant.username}
+                        <span className="mx-2 text-xs text-purple-600 ">
+                          {participant._id === groupDetails.admin && "admin"}
+                        </span>
+                      </p>
+                      <span className="text-xs text-gray-500 md:text-sm">
+                        {participant.email}
                       </span>
-                    </p>
-                    <span className="text-xs text-gray-500 md:text-sm">
-                      {participant.email}
-                    </span>
-                  </div>
-
-                  {groupDetails.admin === user._id && (
-                    <button
-                      onClick={() => {
-                        setPromtModal({
-                          isOpen: true,
-                          onproceed: () =>
-                            removeParticipant(participant._id || ""),
-                          text: `Are you sure you want to remove ${participant.username} ?`,
-                        });
-                      }}
-                      className="ml-auto rounded-md inline-flex aspect-square items-center self-end bg-red-500 p-3 text-black shadow-[5px_5px_0px_0px_#4f4e4e] transition-all duration-150 ease-in-out active:translate-x-[5px] active:translate-y-[5px] active:shadow-[0px_0px_0px_0px_#4f4e4e]"
-                    >
-                      <IoPersonRemove />
-                    </button>
-                  )}
-                </li>
-              ))}
-            </ul>
-
-            <div className="max-w-md mx-auto flex flex-col gap-4">
-              {groupDetails?.admin === user?._id ? (
-                <>
-                  {!isAddingParticipant ? (
-                    <button
-                      onClick={() => setIsAddingParticipant(true)}
-                      className="w-full  flex items-center gap-2 rounded-md text-sm bg-purple-600 p-3 text-center  text-zinc-100 shadow-[5px_5px_0px_0px_#4f4e4e] transition-all duration-150 ease-in-out active:translate-x-[5px] active:translate-y-[5px] active:shadow-[0px_0px_0px_0px_#4f4e4e]"
-                    >
-                      <MdGroupAdd className="text-xl" /> Add Participants
-                    </button>
-                  ) : (
-                    <div className="w-full flex flex-col justify-start items-center gap-2">
-                      <MyComboBox
-                        placeholder="Select User to add..."
-                        value={participantAdded}
-                        options={users.map((user) => ({
-                          label: user.username,
-                          value: user._id,
-                        }))}
-                        onChange={({ value }) => {
-                          setParticipantAdded(value);
-                        }}
-                      />
-
-                      <div className="flex gap-5">
-                        <button
-                          onClick={() => addParticipant()}
-                          className="w-20  flex items-center gap-2 rounded-md text-sm bg-purple-700 p-3 text-center  text-zinc-100 shadow-[5px_5px_0px_0px_#4f4e4e] transition-all duration-150 ease-in-out active:translate-x-[5px] active:translate-y-[5px] active:shadow-[0px_0px_0px_0px_#4f4e4e]"
-                        >
-                          + Add
-                        </button>
-                        <button
-                          onClick={() => {
-                            setIsAddingParticipant(false);
-                            setParticipantAdded("");
-                          }}
-                          className="w-20  flex items-center gap-2 rounded-md text-sm bg-red-700 p-3 text-center  text-zinc-100 shadow-[5px_5px_0px_0px_#4f4e4e] transition-all duration-150 ease-in-out active:translate-x-[5px] active:translate-y-[5px] active:shadow-[0px_0px_0px_0px_#4f4e4e]"
-                        >
-                          Cancel
-                        </button>
-                      </div>
                     </div>
-                  )}
-                </>
-              ) : (
-                <button
-                  onClick={() => {
-                    setPromtModal({
-                      isOpen: true,
-                      onproceed: () => leaveGroup(chatId),
-                      text: "Confirm to Leave the Group",
-                    });
-                  }}
-                  className="w-full  flex items-center gap-2 rounded-md text-sm bg-red-700 p-3 text-center  text-white-100 shadow-[5px_5px_0px_0px_#4f4e4e] transition-all duration-150 ease-in-out active:translate-x-[5px] active:translate-y-[5px] active:shadow-[0px_0px_0px_0px_#4f4e4e]"
-                >
-                  <MdOutlineExitToApp className="text-xl" /> Leave Group
-                </button>
-              )}
 
-              {groupDetails?.admin === user._id && (
-                <button
-                  onClick={() => {
-                    setPromtModal({
-                      isOpen: true,
-                      onproceed: () => deleteGroupChat(),
-                      text: "Are you sure you want to delete this group",
-                    });
-                  }}
-                  className="w-full flex items-center gap-2 rounded-md text-sm bg-red-700 p-3 text-center  text-zinc-100 shadow-[5px_5px_0px_0px_#4f4e4e] transition-all duration-150 ease-in-out active:translate-x-[5px] active:translate-y-[5px] active:shadow-[0px_0px_0px_0px_#4f4e4e]"
-                >
-                  <MdDeleteForever className="text-xl" /> Delete Group
-                </button>
-              )}
+                    {groupDetails.admin === user._id && (
+                      <button
+                        onClick={() => {
+                          setPromtModal({
+                            isOpen: true,
+                            onproceed: () =>
+                              removeParticipant(participant._id || ""),
+                            text: `Are you sure you want to remove ${participant.username} ?`,
+                          });
+                        }}
+                        disabled={disableButton}
+                        className="ml-auto rounded-md inline-flex aspect-square items-center self-end bg-red-500 p-3 text-black shadow-[5px_5px_0px_0px_#4f4e4e] transition-all duration-150 ease-in-out active:translate-x-[5px] active:translate-y-[5px] active:shadow-[0px_0px_0px_0px_#4f4e4e]"
+                      >
+                        {disableButton ? (
+                          <FaSpinner className="animate-spin" />
+                        ) : (
+                          <IoPersonRemove />
+                        )}
+                      </button>
+                    )}
+                  </li>
+                ))}
+              </ul>
+
+              <div className="max-w-md mx-auto flex flex-col gap-4">
+                {groupDetails?.admin === user?._id ? (
+                  <>
+                    {!isAddingParticipant ? (
+                      <button
+                        onClick={() => setIsAddingParticipant(true)}
+                        disabled={disableButton}
+                        className="w-full  flex items-center gap-2 rounded-md text-sm bg-purple-600 p-3 text-center  text-zinc-100 shadow-[5px_5px_0px_0px_#4f4e4e] transition-all duration-150 ease-in-out active:translate-x-[5px] active:translate-y-[5px] active:shadow-[0px_0px_0px_0px_#4f4e4e]"
+                      >
+                        {isAddingParticipantLoading ? (
+                          <FaSpinner className="animate-spin mx-auto " />
+                        ) : (
+                          <>
+                            <MdGroupAdd className="text-xl" /> Add Participants
+                          </>
+                        )}
+                      </button>
+                    ) : (
+                      <div className="w-full flex flex-col justify-start items-center gap-2">
+                        <MyComboBox
+                          placeholder="Select User to add..."
+                          value={participantAdded}
+                          options={users.map((user) => ({
+                            label: user.username,
+                            value: user._id,
+                          }))}
+                          onChange={({ value }) => {
+                            setParticipantAdded(value);
+                          }}
+                        />
+
+                        <div className="flex gap-5">
+                          <button
+                            onClick={() => addParticipant()}
+                            disabled={disableButton}
+                            className="w-20  flex items-center gap-2 rounded-md text-sm bg-purple-700 p-3 text-center  text-zinc-100 shadow-[5px_5px_0px_0px_#4f4e4e] transition-all duration-150 ease-in-out active:translate-x-[5px] active:translate-y-[5px] active:shadow-[0px_0px_0px_0px_#4f4e4e]"
+                          >
+                            {isAddingParticipantLoading ? (
+                              <FaSpinner className="mx-auto animate-spin" />
+                            ) : (
+                              "+ Add"
+                            )}
+                          </button>
+                          <button
+                            onClick={() => {
+                              setIsAddingParticipant(false);
+                              setParticipantAdded("");
+                            }}
+                            disabled={disableButton}
+                            className="w-20  flex items-center gap-2 rounded-md text-sm bg-red-700 p-3 text-center  text-zinc-100 shadow-[5px_5px_0px_0px_#4f4e4e] transition-all duration-150 ease-in-out active:translate-x-[5px] active:translate-y-[5px] active:shadow-[0px_0px_0px_0px_#4f4e4e]"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <button
+                    onClick={() => {
+                      setPromtModal({
+                        isOpen: true,
+                        onproceed: () => leaveGroup(chatId),
+                        text: "Confirm to Leave the Group",
+                      });
+                    }}
+                    disabled={disableButton}
+                    className="w-full  flex items-center gap-2 rounded-md text-sm bg-red-700 p-3 text-center  text-white-100 shadow-[5px_5px_0px_0px_#4f4e4e] transition-all duration-150 ease-in-out active:translate-x-[5px] active:translate-y-[5px] active:shadow-[0px_0px_0px_0px_#4f4e4e]"
+                  >
+                    {deleteGroupLoading ? (
+                      <FaSpinner className="animate-spin mx-auto" />
+                    ) : (
+                      <>
+                        <MdOutlineExitToApp className="text-xl" /> Leave Group
+                      </>
+                    )}
+                  </button>
+                )}
+
+                {groupDetails?.admin === user._id && (
+                  <button
+                    onClick={() => {
+                      setPromtModal({
+                        isOpen: true,
+                        onproceed: () => deleteGroupChat(),
+                        text: "Are you sure you want to delete this group",
+                      });
+                    }}
+                    disabled={disableButton}
+                    className="w-full flex items-center gap-2 rounded-md text-sm bg-red-700 p-3 text-center  text-zinc-100 shadow-[5px_5px_0px_0px_#4f4e4e] transition-all duration-150 ease-in-out active:translate-x-[5px] active:translate-y-[5px] active:shadow-[0px_0px_0px_0px_#4f4e4e]"
+                  >
+                    {deleteGroupLoading ? (
+                      <FaSpinner className="animate-spin mx-auto" />
+                    ) : (
+                      <>
+                        <MdDeleteForever className="text-xl" /> Delete Group
+                      </>
+                    )}
+                  </button>
+                )}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </>

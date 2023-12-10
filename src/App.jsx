@@ -7,6 +7,8 @@ import { useAuth } from "./context/AuthContext";
 import Chat from "./pages/Chat";
 import ForgetPasswordRequest from "./pages/ForgetPasswordRequest";
 import ResetPassword from "./pages/ResetPassword";
+import Typing from "./components/Typing/Typing";
+import Loader from "./components/Loader/Loader";
 
 const App = () => {
   return (
@@ -56,6 +58,8 @@ const App = () => {
             </NonAuthRoute>
           }
         />
+
+        <Route path="/loading" element={<Loader />} />
       </Routes>
     </>
   );

@@ -19,3 +19,7 @@
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
 }
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}

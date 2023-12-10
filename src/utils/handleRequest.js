@@ -4,8 +4,6 @@ const handleRequest = async (req, setLoading, onSuccess, onError) => {
 
     const { data: res } = await req();
 
-    console.log(res);
-
     if (res?.success) {
       onSuccess(res);
     }

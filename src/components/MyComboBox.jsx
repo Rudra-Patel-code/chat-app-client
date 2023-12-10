@@ -21,7 +21,7 @@ const MyComboBox = ({ options, value, onChange, placeholder }) => {
         <Combobox.Button className={"w-full"}>
           <Combobox.Input
             placeholder={placeholder}
-            className="block w-full rounded-md border-0 py-3 px-4 bg-zinc-700 outline outline-1 outline-zinc-600 text-white placeholder:text-white/70 focus:ring-[1px] focus:ring-white"
+            className="block w-full  rounded-md border-0 py-3 px-4 bg-zinc-700 outline outline-1 outline-zinc-600 text-white placeholder:text-white/70 focus:ring-[1px] focus:ring-white"
             onChange={(e) => {
               setLocalOptions(
                 options.filter((op) => op.label.includes(e.target.value))
@@ -41,8 +41,8 @@ const MyComboBox = ({ options, value, onChange, placeholder }) => {
                 key={option.value}
                 value={option}
                 className={({ active }) =>
-                  `cursor-pointer relative rounded-xl select-none py-3 pl-3 pr-6 ${
-                    active ? " text-white" : "text-white"
+                  `cursor-pointer relative rounded-xl text-white select-none py-3 pl-3 pr-6 ${
+                    active ? " bg-zinc-900" : "text-white"
                   }`
                 }
               >
@@ -50,7 +50,7 @@ const MyComboBox = ({ options, value, onChange, placeholder }) => {
                   <>
                     <span
                       className={`block line-clamp-1 ${
-                        selected ? "font-semibold" : ""
+                        selected ? " text-purple-600" : ""
                       } `}
                     >
                       {option.label}
@@ -59,11 +59,7 @@ const MyComboBox = ({ options, value, onChange, placeholder }) => {
                     {selected && (
                       <span
                         className={`absolute inset-y-0 right-0 flex items-center pr-4
-                          ${
-                            active
-                              ? "bg-zinc-800 text-white"
-                              : "text-purple-600"
-                          }
+                          ${active ? " text-white" : "text-purple-600"}
                         `}
                       >
                         <IoCheckmarkSharp className="" aria-hidden="true" />

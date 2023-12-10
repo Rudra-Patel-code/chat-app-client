@@ -4,5 +4,15 @@ export default {
   theme: {
     extend: {},
   },
-  plugins: [],
+  plugins: [
+    function ({ addUtilities }) {
+      const newUtilities = {
+        ".scrollbar-hide": {
+          "scrollbar-width": "none",
+          "-ms-overflow-style": "none",
+        },
+      };
+      addUtilities(newUtilities);
+    },
+  ],
 };

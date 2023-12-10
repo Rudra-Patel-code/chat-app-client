@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FaEllipsisV, FaLeaf, FaPaperclip } from "react-icons/fa";
+import { FaEllipsisV, FaLeaf, FaPaperclip, FaSpinner } from "react-icons/fa";
 import { useAuth } from "../../context/AuthContext";
 import { generateChatMetaData } from "../../utils/helper";
 import { MdDelete } from "react-icons/md";
@@ -70,7 +70,7 @@ const ChatMenuCard = ({
       <div
         role="button"
         onClick={() => onClick(chat)}
-        className={` max-w-[100vw] group cursor-pointer py-3 md:px-2  ${
+        className={` max-w-[100vw] group  cursor-pointer py-3 md:px-2  ${
           isActive && "bg-zinc-800"
         } flex items-center justify-start  hover:bg-zinc-800`}
         onMouseLeave={() => {
@@ -116,6 +116,7 @@ const ChatMenuCard = ({
                     text: "Are you sure you want to delete this chat",
                   });
                 }}
+                disabled={deletingChatLoading}
                 className="flex items-center gap-2 hover:bg-red-700 hover:text-white transition-all text-red-500 py-2 px-1 hover:rounded-md "
               >
                 <MdDelete /> Delete Chat
@@ -152,14 +153,12 @@ const ChatMenuCard = ({
           <p className="line-clamp-1">{metaData.title}</p>
 
           <div className="flex gap-2 items-center ">
-            {chat.lastMessage && chat.lastMessage.attachments?.length > 0 ? (
+            {chat.lastMessage && chat.lastMessage?.attachments?.length > 0 ? (
               <FaPaperclip className="text-white/50" />
-            ) : (
-              <FaPaperclip className="text-white/50 text-sm" />
-            )}
+            ) : null}
 
-            <small className="line-clamp-1 text-white/50">
-              {metaData.lastMessage}
+            <small className="line-clamp-1  text-white/50">
+              {metaData.lastMessage.substring(0, 20)}...
             </small>
           </div>
         </div>

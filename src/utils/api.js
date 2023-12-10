@@ -96,3 +96,17 @@ export const deleteOneOnOneChat = (chatId) => {
 export const leaveFromGroup = (chatId) => {
   return axios.delete(`chats/leave/group/${chatId}`);
 };
+
+export const createOneOnOneChat = (participantId) => {
+  return axios.post(`chats/create/one/${participantId}`);
+};
+
+export const createGroupChat = (data) => {
+  return axios.post(`chats/create/group/`, data);
+};
+
+export const sendMessage = (chatId, formData) => {
+  return axios.post(`/messages/${chatId}`, formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+};
