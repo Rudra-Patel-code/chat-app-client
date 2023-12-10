@@ -8,7 +8,7 @@ const MessageCard = ({ isUserMessage, isGroupChatMessage, message }) => {
       <div className={`relative`}>
         <div
           className={`flex min-w-[150px] max-w-[80%] items-start justify-start gap-2 text-white md:max-w-[70%] ${
-            isUserMessage ? "ml-auto flex-row-reverse " : "mr-0 mr-auto"
+            isUserMessage ? "ml-auto flex-row-reverse " : "mr-auto"
           }`}
         >
           <img
@@ -36,7 +36,7 @@ const MessageCard = ({ isUserMessage, isGroupChatMessage, message }) => {
               </span>
             </p>
             <div
-              className={`relative max-w-full p-2 text-xs after:absolute after:top-0 after:border-t-[15px] after:border-t-[#121212] md:p-3 md:text-sm ${
+              className={`relative max-w-full p-3 text-xs after:absolute after:top-0 after:border-t-[15px] after:border-t-[#121212]  md:text-sm ${
                 isUserMessage ? "bg-purple-600" : "bg-zinc-600"
               } after:left-0 after:border-r-[15px] after:border-r-transparent whitespace-normal break-words`}
             >

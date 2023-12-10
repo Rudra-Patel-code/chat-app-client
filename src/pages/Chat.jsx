@@ -20,6 +20,7 @@ import { RxCross2 } from "react-icons/rx";
 import Typing from "../components/Typing/Typing";
 import Loader from "../components/Loader/Loader";
 import MessageCard from "../components/MessageCard";
+import LoaderTwo from "../components/Loader/LoaderTwo";
 
 const Chat = () => {
   const navigate = useNavigate();
@@ -81,7 +82,7 @@ const Chat = () => {
 
     await handleRequest(
       async () => await sendMessage(currentChat._id, myFormData),
-      () => (attachedFiles.length > 0 ? setSendingImages : null),
+      attachedFiles.length > 0 ? setSendingImages : null,
       (res) => {
         setMessage("");
         setAttachedFiles([]);
@@ -473,6 +474,21 @@ const Chat = () => {
                   )}
                 </form>
               </div>
+              {sendingImages && (
+                <div className="absolute top-0 left-0 z-50 w-full p-4 h-[100vh] flex items-center justify-center backdrop-blur-[3px]">
+                  <div className="max-w-[300px]  w-full border-2 h-[220px] border-zinc-600 rounded-lg items-center justify-center flex flex-col relative bg-zinc-900 ">
+                    <p className="text-center mt-7">
+                      Please Wait ... <br /> While we process images
+                    </p>
+                    <div className="mt-5">
+                      <Loader />
+                    </div>
+                    <div className="">
+                      <LoaderTwo />
+                    </div>
+                  </div>
+                </div>
+              )}
             </>
           ) : (
             <div className="flex h-full w-full flex-col items-center justify-center px-4 text-center">
