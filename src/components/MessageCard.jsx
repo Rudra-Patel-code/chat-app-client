@@ -1,4 +1,5 @@
 import moment from "moment";
+import axios from "axios";
 import { FaRegArrowAltCircleDown } from "react-icons/fa";
 
 const MessageCard = ({ isUserMessage, isGroupChatMessage, message }) => {
@@ -7,7 +8,7 @@ const MessageCard = ({ isUserMessage, isGroupChatMessage, message }) => {
       <div className={`relative`}>
         <div
           className={`flex min-w-[150px] max-w-[80%] items-start justify-start gap-2 text-white md:max-w-[70%] ${
-            isUserMessage ? "ml-auto flex-row-reverse " : "mr-0"
+            isUserMessage ? "ml-auto flex-row-reverse " : "mr-0 mr-auto"
           }`}
         >
           <img
@@ -59,10 +60,6 @@ const MessageCard = ({ isUserMessage, isGroupChatMessage, message }) => {
                     alt="attachment"
                     className="w-full object-contain rounded-md max-w-[200px]"
                   />
-
-                  <button className="absolute p-2 bg-zinc-800 bg-opacity-60 top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]">
-                    <FaRegArrowAltCircleDown className="text-2xl" />
-                  </button>
                 </div>
               ))}
             </div>
