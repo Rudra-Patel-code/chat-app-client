@@ -59,7 +59,7 @@ const App = () => {
           }
         />
 
-        <Route path="/loading" element={<Loader />} />
+        <Route path="*" element={<Navigate to={"/"} />} />
       </Routes>
     </>
   );
